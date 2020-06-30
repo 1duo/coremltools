@@ -74,7 +74,7 @@ class TestAddN:
         itertools.product([True, False], backends, list(range(6)), list(range(1, 10)),),
     )
     def test(self, use_cpu_only, backend, rank, num_inputs):
-        if use_cpu_only is False and rank is 5 and num_inputs is 9:
+        if use_cpu_only is False and rank == 5 and num_inputs == 9:
             # <rdar://63680019> Failure on this specific parameter set
             return
         if backend == "mil_proto" and rank == 0:
@@ -595,8 +595,8 @@ class TestWhileLoop:
     def test_while_loop_0(self, use_cpu_only, backend):
         @make_tf_graph([(1,)])
         def build_model(x):
-            c = lambda i: tf.greater(tf.math.reduce_mean(i), 5)
-            b = lambda i: i - 1
+            def c(i): return tf.greater(tf.math.reduce_mean(i), 5)
+            def b(i): return i - 1
             return tf.while_loop(c, b, [x])
 
         model, inputs, outputs = build_model
@@ -612,8 +612,8 @@ class TestWhileLoop:
     def test_while_loop_1(self, use_cpu_only, backend):
         @make_tf_graph([(1,), (1,)])
         def build_model(x, y):
-            c = lambda i, j: tf.greater(tf.math.reduce_mean(i), tf.math.reduce_mean(j))
-            b = lambda i, j: (tf.add(i, 1), tf.square(j))
+            def c(i, j): return tf.greater(tf.math.reduce_mean(i), tf.math.reduce_mean(j))
+            def b(i, j): return (tf.add(i, 1), tf.square(j))
             return tf.while_loop(c, b, [x, y])
 
         model, inputs, outputs = build_model
@@ -633,8 +633,8 @@ class TestWhileLoop:
     def test_while_loop_2(self, use_cpu_only, backend):
         @make_tf_graph([(1,), (1, 2)])
         def build_model(x, y):
-            c = lambda i, j: tf.greater(tf.math.reduce_mean(i), 5)
-            b = lambda i, j: (i - 3, j * 2)
+            def c(i, j): return tf.greater(tf.math.reduce_mean(i), 5)
+            def b(i, j): return (i - 3, j * 2)
             return tf.while_loop(c, b, [x, y])
 
         model, inputs, outputs = build_model
@@ -653,10 +653,10 @@ class TestWhileLoop:
     def test_while_loop_3(self, use_cpu_only, backend):
         @make_tf_graph([(1,), (1, 2), (1,)])
         def build_model(x, y, z):
-            c = lambda i, j, k: tf.greater(
+            def c(i, j, k): return tf.greater(
                 tf.math.reduce_mean(i), tf.math.reduce_mean(j)
             )
-            b = lambda i, j, k: (i / 3, j ** 2, k - 2)
+            def b(i, j, k): return (i / 3, j ** 2, k - 2)
             return tf.while_loop(c, b, [x, y, z])
 
         model, inputs, outputs = build_model
@@ -676,10 +676,10 @@ class TestWhileLoop:
     def test_while_loop_4(self, use_cpu_only, backend):
         @make_tf_graph([(1,), (1, 2), (1,), (2, 1)])
         def build_model(x, y, z, m):
-            c = lambda i, j, k, l: tf.greater(
+            def c(i, j, k, l): return tf.greater(
                 tf.math.reduce_mean(i), tf.math.reduce_mean(j)
             )
-            b = lambda i, j, k, l: (i / 3, j ** 2, k - 2, l % 2)
+            def b(i, j, k, l): return (i / 3, j ** 2, k - 2, l % 2)
             return tf.while_loop(c, b, [x, y, z, m])
 
         model, inputs, outputs = build_model
@@ -3023,7 +3023,7 @@ class TestScatterGather:
         shape = np.random.randint(low=2, high=5, size=data_rank)
         indices_shape = np.random.randint(low=2, high=5, size=indices_rank)
         indices_shape[-1] = np.random.randint(low=1, high=data_rank + 1)
-        updates_shape = list(indices_shape[:-1]) + list(shape[indices_shape[-1] :])
+        updates_shape = list(indices_shape[:-1]) + list(shape[indices_shape[-1]:])
 
         updates = np.random.rand(*updates_shape)
         indices_list = []
@@ -3650,7 +3650,7 @@ class TestOneHot:
                 x = tf.placeholder(tf.int32, shape=x_shape)
                 axis = (
                     axis if axis >= -1 else axis + rank + 1
-                )  ## TF limitation: Doesn't support axis < -1
+                )  # TF limitation: Doesn't support axis < -1
                 res = tf.one_hot(
                     x, axis=axis, depth=depth, on_value=on_value, off_value=off_value
                 )
@@ -3668,7 +3668,7 @@ class TestOneHot:
                 depth_input = tf.placeholder(tf.int32)
                 axis = (
                     axis if axis >= -1 else axis + rank + 1
-                )  ## TF limitation: Doesn't support axis < -1
+                )  # TF limitation: Doesn't support axis < -1
                 res = tf.one_hot(
                     x,
                     axis=axis,
@@ -4850,7 +4850,7 @@ class TestLSTMBlockCell:
 
             run_compare_tf(
                 graph,
-                {x: np.random.rand(*x_shape).astype(np.float32),},
+                {x: np.random.rand(*x_shape).astype(np.float32), },
                 res,
                 use_cpu_only=use_cpu_only,
                 frontend_only=False,
@@ -4883,7 +4883,7 @@ class TestLSTMBlockCell:
 
             run_compare_tf(
                 graph,
-                {x: np.random.rand(*x_shape).astype(np.float32),},
+                {x: np.random.rand(*x_shape).astype(np.float32), },
                 res,
                 use_cpu_only=use_cpu_only,
                 frontend_only=False,
@@ -4900,7 +4900,7 @@ class TestVariable:
     )
     def test_tf_no_variable(self, use_cpu_only, backend):
         with tf.Graph().as_default() as graph:
-            x = tf.placeholder(tf.float32, shape=[1,], name="input")
+            x = tf.placeholder(tf.float32, shape=[1, ], name="input")
             y = tf.Variable([1.0], dtype=tf.float32, name="y")
 
             # We set our assign op
@@ -4911,7 +4911,7 @@ class TestVariable:
 
             run_compare_tf(
                 graph,
-                {x: np.random.rand(1).astype(np.float32),},
+                {x: np.random.rand(1).astype(np.float32), },
                 res,
                 use_cpu_only=use_cpu_only,
                 frontend_only=False,
