@@ -27,7 +27,7 @@ def _compare(a, b, encoding="utf8"):  # type: (Text, Text, Text) -> bool
     return a == b
 
 
-def _is_input_shape_mapping_defined(node, graph):  # type: (Node, Graph) -> Bool
+def _is_input_shape_mapping_defined(node, graph):  # type: (Node, Graph) -> bool
     if node.inputs[0] in graph.onnx_coreml_shape_mapping:
         return True
     else:
@@ -302,7 +302,7 @@ def _add_conv_like_op(
 
 def _is_no_op(
     builder, node, graph, err
-):  # type: (NeuralNetworkBuilder, Node, Graph, ErrorHandling) -> Bool
+):  # type: (NeuralNetworkBuilder, Node, Graph, ErrorHandling) -> bool
 
     if node.inputs[0] in graph.shape_dict and node.outputs[0] in graph.shape_dict:
         if graph.shape_dict[node.inputs[0]] == graph.shape_dict[node.outputs[0]]:
@@ -1291,7 +1291,7 @@ def _convert_argmax(
             graph.onnx_coreml_shape_mapping[node.outputs[0]] = mapp
         else:
             graph.onnx_coreml_shape_mapping[node.outputs[0]] = (
-                mapp[:axis] + mapp[axis + 1 :]
+                mapp[:axis] + mapp[axis + 1:]
             )
 
 
@@ -1491,7 +1491,6 @@ def _convert_softmax(
 def _convert_gemm(
     builder, node, graph, err
 ):  # type: (NeuralNetworkBuilder, Node, Graph, ErrorHandling) -> None
-
     """
     operation:  alpha * (A * B) + beta * C
     so far the case only handled is :

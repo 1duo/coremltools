@@ -95,11 +95,11 @@ class ErrorHandling(object):
     ):
         # type: (...) -> None
         """
-      Unsupported feature warning
-      """
+        Unsupported feature warning
+        """
         print(
             "Warning: Unsupported Feature in op of type {}, with input name = {}, "
             "output name = {}. Warning message: {}\n".format(
-                node.op_type, node.inputs[0], node.outputs[0], err_message
+                node.op_type, node.inputs[0], node.outputs[0], warn_message
             )
         )

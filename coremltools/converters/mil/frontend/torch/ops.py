@@ -447,9 +447,9 @@ def flatten(context, node):
         raise ValueError(
             "Start must be before end. (start, end) == ({}, {})".format(start, end_val)
         )
-    for dim in dims[start : end + 1]:
+    for dim in dims[start: end + 1]:
         total *= dim
-    dims = dims[:start] + [total] + dims[end + 1 :]
+    dims = dims[:start] + [total] + dims[end + 1:]
 
     reshape = mb.reshape(x=x, shape=dims, name=node.name)
     context.add(reshape)
@@ -474,7 +474,7 @@ def _adjust_pad_for_ceil_mode(input_shape, kernel_sizes, stride_sizes, pad_sizes
         dim = input_shape[idx]
         kernel = kernel_sizes[idx]
         stride = stride_sizes[idx]
-        pad = pad_sizes[idx * 2 : idx * 2 + 2]
+        pad = pad_sizes[idx * 2: idx * 2 + 2]
         out_numerator = dim + pad[0] + pad[1] - kernel
         remainder = out_numerator % stride
         # Additional padding is added only on one side.
@@ -1048,7 +1048,7 @@ def lstm(context, node):
     else:
         if bias:
             # (1.)
-            biases = weights[len(weights) // 2 :]
+            biases = weights[len(weights) // 2:]
             weights = weights[: len(weights) // 2]
             ih_b = biases[0]
             hh_b = biases[1]
@@ -1281,7 +1281,7 @@ def loop(context, node):
             iter_var = mb.identity(x=iter_var)
 
         # Must return tuple with same length and types as @loop_vars.
-        return tuple([iter_var,] + res)
+        return tuple([iter_var, ] + res)
 
     loop = mb.while_loop(
         _cond=_loop_cond, _body=_loop_body, loop_vars=loop_vars, name=name
@@ -1496,7 +1496,7 @@ def _slice(context, node):
     end = inputs[3].val if inputs[3] is not None else None
     step = inputs[4].val
 
-    if start == 0 and end is None and step is 1:
+    if start == 0 and end is None and step == 1:
         # Handling x[:], just pass through the tensor.
         context.add(x, node.name)
         return

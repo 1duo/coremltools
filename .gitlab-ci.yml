@@ -88,7 +88,6 @@ build_wheel_linux_py37:
 #    WHEEL_PATH: build/dist/coremltools*cp37-none-manylinux1_x86_64.whl
 #    PYTHON: "3.7"
 
-
 #########################################################################
 ##
 ##                         macOS - Build & Test
