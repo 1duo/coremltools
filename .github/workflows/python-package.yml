@@ -41,4 +41,4 @@ jobs:
         pip install -e .
     - name: Test with pytest
       run: |
-        pytest ./coremltools/
+        pytest ./coremltools/converters/
